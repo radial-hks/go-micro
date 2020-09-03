@@ -1,0 +1,13 @@
+{
+  "id":"14",
+  "name":"radial_node",
+  "tags":["dev"],
+  "port":80,
+  "address":"127.0.0.1",
+  "check":{
+    "HTTP":"http://127.0.0.1:9090/health",
+    "interval":"5s"
+  }
+}
+
+
