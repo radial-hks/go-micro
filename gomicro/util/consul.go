@@ -2,19 +2,29 @@ package util
 
 import (
 	consul "github.com/hashicorp/consul/api"
+	"github.com/hashicorp/go-uuid"
 	"log"
 )
 
 var CLIENT *consul.Client
 
-func init(){
-	config :=  consul.DefaultConfig()
+var ServiceID string
+var ServiceName string
+var ServicePort int
+
+func init() {
+	config := consul.DefaultConfig()
 	config.Address = "127.0.0.1:8500"
-	client,err := consul.NewClient(config)
-	if err != nil{
+	client, err := consul.NewClient(config)
+	if err != nil {
 		log.Fatal("wrong")
 	}
 	CLIENT = client
+	uu_name, err := uuid.GenerateUUID()
+	if err != nil {
+		log.Fatal("uuid wrong")
+	}
+	ServiceID = "userservice_" + uu_name
 }
 
 //func Regservice(){
@@ -57,25 +67,30 @@ func init(){
 //}
 //}
 
-func Regservice(){
+func SetServiceNameAndPort(name string, port int) {
+	ServiceName = name
+	ServicePort = port
+}
+
+func Regservice() {
 	reg := consul.AgentServiceRegistration{}
-	reg.ID = "15"
-	reg.Name = "hks"
+	reg.ID = ServiceID
+	reg.Name = ServiceName
 	reg.Address = "127.0.0.1"
-	reg.Port = 80
+	reg.Port = ServicePort
 	reg.Tags = []string{"dev"}
 
 	check := consul.AgentServiceCheck{}
-	check.Interval =  "5s"
+	check.Interval = "5s"
 	check.HTTP = "http://127.0.0.1:9090/health"
 
 	reg.Check = &check
 
-	if err:=CLIENT.Agent().ServiceRegister(&reg);err != nil {
+	if err := CLIENT.Agent().ServiceRegister(&reg); err != nil {
 		log.Fatal("wrong")
 	}
 }
 
-func UnregService(){
-	CLIENT.Agent().ServiceDeregister("15")
+func UnregService() {
+	CLIENT.Agent().ServiceDeregister(ServiceID)
 }
