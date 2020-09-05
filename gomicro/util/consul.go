@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	consul "github.com/hashicorp/consul/api"
 	"github.com/hashicorp/go-uuid"
 	"log"
@@ -74,6 +75,7 @@ func SetServiceNameAndPort(name string, port int) {
 
 func Regservice() {
 	reg := consul.AgentServiceRegistration{}
+
 	reg.ID = ServiceID
 	reg.Name = ServiceName
 	reg.Address = "127.0.0.1"
@@ -82,7 +84,8 @@ func Regservice() {
 
 	check := consul.AgentServiceCheck{}
 	check.Interval = "5s"
-	check.HTTP = "http://127.0.0.1:9090/health"
+	//check.HTTP = "http://127.0.0.1:9092/health"
+	check.HTTP = fmt.Sprintf("http://%s:%d/health",reg.Address,ServicePort)
 
 	reg.Check = &check
 

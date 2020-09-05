@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kit/kit/endpoint"
+	"gomicro/util"
+	"strconv"
 )
 
 type UserReuest struct {
@@ -21,7 +23,7 @@ func GenUserEnpoint(service UserService) endpoint.Endpoint{
 
 		reslut := "NOTHONING"
 		if r.Method == "GET" {
-			reslut = service.GetName(r.Uid)
+			reslut = service.GetName(r.Uid) + strconv.Itoa(util.ServicePort)
 		} else if r.Method == "DELETE"  {
 			err :=service.DeleteUser(r.Uid)
 			if err != nil{
