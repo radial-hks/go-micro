@@ -85,7 +85,7 @@ func Regservice() {
 	check := consul.AgentServiceCheck{}
 	check.Interval = "5s"
 	//check.HTTP = "http://127.0.0.1:9092/health"
-	check.HTTP = fmt.Sprintf("http://%s:%d/health",reg.Address,ServicePort)
+	check.HTTP = fmt.Sprintf("http://%s:%d/health", reg.Address, ServicePort)
 
 	reg.Check = &check
 

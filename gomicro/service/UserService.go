@@ -9,18 +9,18 @@ type IUserService interface {
 	DeleteUser(userID int) error
 }
 
-type UserService struct {}
+type UserService struct{}
 
- func (*UserService) GetName(userID int) string {
- 	if userID == 101 {
- 		return "radial"
+func (*UserService) GetName(userID int) string {
+	if userID == 101 {
+		return "radial"
 	}
 	return "hah"
- }
+}
 
- func (*UserService) DeleteUser(userID int) error {
-	 if userID == 101 {
-		 return errors.New("-777")
-	 }
- 	return nil
- }
+func (*UserService) DeleteUser(userID int) error {
+	if userID == 101 {
+		return errors.New("-777")
+	}
+	return nil
+}

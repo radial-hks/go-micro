@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
@@ -11,6 +12,7 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	consulapi "github.com/hashicorp/consul/api"
 	. "gomicro_2/Service"
+	"gomicro_2/util"
 	"io"
 	"net/url"
 	"os"
@@ -37,7 +39,7 @@ func main_2() {
 	fmt.Println(userinfo)
 }
 
-func main() {
+func main_3() {
 
 	config := consulapi.DefaultConfig()
 	config.Address = "127.0.0.1:8500"
@@ -89,5 +91,30 @@ func main() {
 
 		}
 	}
+
+}
+
+func main(){
+	confidA := hystrix.CommandConfig{
+		Timeout: 2000,
+		MaxConcurrentRequests: 5,
+		RequestVolumeThreshold: 3,
+		ErrorPercentThreshold: 20,
+		SleepWindow: int(time.Second * 15),
+
+	}
+	hystrix.ConfigureCommand("get_user", confidA)
+	err := hystrix.Do("get_user", func() error {
+		user,err := util.GetUser()
+		fmt.Println(user)
+		return err
+	}, func(e error) error {
+		fmt.Println("falled")
+		return e
+	})
+	if err != nil{
+		fmt.Println(err)
+	}
+
 
 }
