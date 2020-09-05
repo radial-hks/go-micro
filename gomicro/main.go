@@ -5,6 +5,7 @@ import (
 	"fmt"
 	httptransport "github.com/go-kit/kit/transport/http"
 	mymux "github.com/gorilla/mux"
+	"golang.org/x/time/rate"
 	"gomicro/service"
 	"gomicro/util"
 	"log"
@@ -38,7 +39,10 @@ func main() {
 	util.SetServiceNameAndPort(*name, *port)
 
 	user := service.UserService{}
-	endp := service.GenUserEnpoint(user)
+
+	limit := rate.NewLimiter(1, 5)
+	endp := service.RateLimit(limit)(service.GenUserEnpoint(user))
+	//endp := service.GenUserEnpoint(user)
 
 	serverHandler := httptransport.NewServer(endp, service.DecodeUserRequest, service.EncodeUserResponse)
 

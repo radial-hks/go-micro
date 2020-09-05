@@ -65,6 +65,7 @@ func main() {
 			fmt.Println(len(endpoints))
 
 			myld := lb.NewRoundRobin(endpointer)
+			//myld := lb.NewRandom(endpointer,time.Now().UnixNano())
 
 			for {
 				//get_user_info := endpoints[0]
