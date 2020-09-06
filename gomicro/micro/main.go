@@ -4,6 +4,8 @@ import (
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/web"
 	"github.com/micro/go-plugins/registry/consul"
+	"micro/ProdService"
+
 	//"net/http"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -33,12 +35,13 @@ func main() {
 			"result": "ok",
 		})
 	})
-	r.Handle("GET", "/user", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{
-			"result": "radial",
+	// Add Route Group
+	v1group := r.Group("/v1")
+	{
+		v1group.Handle("GET", "/prod", func(context *gin.Context) {
+			context.JSON(http.StatusOK, ProdService.NewProdList(5))
 		})
-	})
-
+	}
 	//r.Run(":9090")
 	server := web.NewService(
 		// name
