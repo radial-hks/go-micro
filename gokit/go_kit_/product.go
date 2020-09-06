@@ -94,27 +94,25 @@ func main_3() {
 
 }
 
-func main(){
+func main() {
 	confidA := hystrix.CommandConfig{
-		Timeout: 2000,
-		MaxConcurrentRequests: 5,
+		Timeout:                2000,
+		MaxConcurrentRequests:  5,
 		RequestVolumeThreshold: 3,
-		ErrorPercentThreshold: 20,
-		SleepWindow: int(time.Second * 15),
-
+		ErrorPercentThreshold:  20,
+		SleepWindow:            int(time.Second * 15),
 	}
 	hystrix.ConfigureCommand("get_user", confidA)
 	err := hystrix.Do("get_user", func() error {
-		user,err := util.GetUser()
+		user, err := util.GetUser()
 		fmt.Println(user)
 		return err
 	}, func(e error) error {
 		fmt.Println("falled")
 		return e
 	})
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
-
 
 }

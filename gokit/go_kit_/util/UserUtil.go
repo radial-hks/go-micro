@@ -10,20 +10,20 @@ import (
 	"github.com/go-kit/kit/sd/lb"
 	httptransport "github.com/go-kit/kit/transport/http"
 	consulapi "github.com/hashicorp/consul/api"
+	. "gomicro_2/Service"
 	"io"
 	"net/url"
 	"os"
 	"time"
-	. "gomicro_2/Service"
 )
 
-func GetUser()(string,error){
+func GetUser() (string, error) {
 	config := consulapi.DefaultConfig()
 	config.Address = "127.0.0.1:8500"
 
 	api_client, err := consulapi.NewClient(config)
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	client := consul.NewClient(api_client)
 
@@ -45,33 +45,31 @@ func GetUser()(string,error){
 
 			endpoints, err := endpointer.Endpoints()
 			if err != nil {
-				return "",err
+				return "", err
 			}
 			fmt.Println(len(endpoints))
 
 			myld := lb.NewRoundRobin(endpointer)
 			//myld := lb.NewRandom(endpointer,time.Now().UnixNano())
 
-
 			//get_user_info := endpoints[0]
 			get_user_info, err := myld.Endpoint()
 			if err != nil {
-				return "",err
+				return "", err
 			}
 			// 第三步：创建一个上下文对象
 			ctx := context.Background()
 			// 第四步：执行
 			res, err := get_user_info(ctx, UserReuest{Uid: 101})
 			if err != nil {
-				return "",err
+				return "", err
 			}
 			// 第五步： 断言 得到响应值
 			userinfo := res.(UserResponse)
 			fmt.Println(userinfo.Result)
 			//fmt.Println(userinfo)
 			time.Sleep(3 * time.Second)
-			return userinfo.Result,nil
-
+			return userinfo.Result, nil
 
 		}
 	}
