@@ -4,6 +4,7 @@ import (
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/web"
 	"github.com/micro/go-plugins/registry/consul"
+	"micro/Helper"
 	"micro/ProdService"
 
 	//"net/http"
@@ -15,7 +16,8 @@ func main() {
 	// consul_url: https://segmentfault.com/a/1190000023529475?utm_source=tag-newest
 	consulreg := consul.NewRegistry(
 		// docker inspect ipAddress + port
-		registry.Addrs("120.79.44.169:8500"),
+		//registry.Addrs("120.79.44.169:8500"),
+		registry.Addrs("127.0.0.4:8500"),
 	)
 	//addr := func(o *web.Options) {
 	//	o.Address = ":8001"
@@ -38,8 +40,17 @@ func main() {
 	// Add Route Group
 	v1group := r.Group("/v1")
 	{
-		v1group.Handle("GET", "/prod", func(context *gin.Context) {
-			context.JSON(http.StatusOK, ProdService.NewProdList(5))
+		v1group.Handle("POST", "/prod", func(context *gin.Context) {
+			var pr Helper.ProdsRequest
+			err := context.Bind(&pr)
+			if err != nil || pr.Size <= 0 {
+				pr = Helper.ProdsRequest{
+					Size: 2,
+				}
+			}
+			context.JSON(http.StatusOK, gin.H{
+				"data": ProdService.NewProdList(pr.Size),
+			})
 		})
 	}
 	//r.Run(":9090")
