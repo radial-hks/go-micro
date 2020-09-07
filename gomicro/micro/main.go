@@ -57,12 +57,10 @@ func main() {
 	server := web.NewService(
 		// name
 		web.Name("product_service"),
-		// go run main.go --server_address :9090
-		//web.Address(":9090"),
+		web.Address(":9090"),
 		web.Handler(r),
 		//  register consul
 		web.Registry(consulreg),
 	)
-	server.Init()
 	server.Run()
 }
