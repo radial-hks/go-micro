@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/micro/go-micro/client"
+	"micro/Models/services"
+
 	//"fmt"
 	"github.com/micro/go-micro/client/selector"
 	"github.com/micro/go-micro/registry"
@@ -64,13 +66,16 @@ func CallAPI2(s selector.Selector) {
 		client.Selector(s),
 		client.ContentType("application/json"),
 	)
-	req := myclient.NewRequest("product_service", "/v1/prod", map[string]int{"size": 10})
-	var rsp map[string]interface{}
+	// blog: https://blog.csdn.net/qq_43442524/article/details/104997539?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.edu_weight
+	req := myclient.NewRequest("product_service", "/v1/prod",
+		services.ProdsRequest{Size: 3})
+	//var rsp map[string]interface{}
+	var rsp services.ProdResponse
 	err := myclient.Call(context.Background(), req, &rsp)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(rsp["data"])
+	fmt.Println(rsp.Data)
 }
 
 func main() {
