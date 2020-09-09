@@ -18,7 +18,7 @@ func NewProd(id int32, pname string) *services.ProdModel {
 }
 
 func (*ProdServices) GetProdsList(ctx context.Context, in *services.ProdsRequest, res *services.ProdResponse) error {
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 4)
 	Models := make([]*services.ProdModel, 0)
 	var i int32
 	for i = 0; i < in.Size; i++ {
