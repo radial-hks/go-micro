@@ -7,5 +7,6 @@ protoc \
 --micro_out=../ --go_out=../ ./*.proto
 
 protoc-go-inject-tag -input=../Models.pb.go
+protoc-go-inject-tag -input=../ProdServices.pb.go
 
 cd .. && cd ..

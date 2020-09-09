@@ -30,8 +30,8 @@ type ProdModel struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// @inject_tag:json:"pid"
-	ProdID int32 `protobuf:"varint,1,opt,name=ProdID,proto3" json:"pid"`
+	// @inject_tag:json:"pid",form:"size"
+	ProdID int32 `protobuf:"varint,1,opt,name=ProdID,proto3" json:"pid" form:"size"`
 	// @inject_tag:json:"pname"
 	ProdName string `protobuf:"bytes,2,opt,name=ProdName,proto3" json:"pname"`
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 package services;
 
 message ProdModel {
-  // @inject_tag:json:"pid"
+  // @inject_tag:json:"pid",form:"size"
   int32 ProdID = 1;
   // @inject_tag:json:"pname"
   string ProdName = 2;

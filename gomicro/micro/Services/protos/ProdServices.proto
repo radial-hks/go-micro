@@ -3,6 +3,7 @@ package services;
 import "Models.proto";
 
 message ProdsRequest {
+  //@inject_tag:form:"size",json:"size"
   int32 size = 1;
 }
 
