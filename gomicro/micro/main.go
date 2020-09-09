@@ -11,6 +11,7 @@ import (
 	"github.com/micro/go-plugins/registry/consul"
 	services "micro/Services"
 	"micro/Weblib"
+	"micro/Wrappers"
 )
 
 type logWrapper struct {
@@ -37,7 +38,9 @@ func main() {
 	)
 	myService := micro.NewService(
 		micro.Name("product_service_client"),
-		micro.WrapClient(NewLogWrapper))
+		micro.WrapClient(NewLogWrapper),
+		micro.WrapClient(Wrappers.NewProdWrapper),
+	)
 	//product_service
 	ProdService := services.NewProdService("product_service", myService.Client())
 	httpserver := web.NewService(
