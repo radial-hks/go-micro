@@ -25,6 +25,12 @@ import (
 //	return res, nil
 //}
 
+func PanicError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 // gin
 func GetProdslist(gin_context *gin.Context) {
 	ProdService := gin_context.Keys["prodService"].(services.ProdService)
@@ -72,4 +78,14 @@ func GetProdslist(gin_context *gin.Context) {
 
 	}
 
+}
+
+func GetProdDetail(gin_context *gin.Context) {
+	var prodReq services.ProdsRequest
+	PanicError(gin_context.BindUri(&prodReq))
+	ProdService := gin_context.Keys["prodService"].(services.ProdService)
+	ProdRes, _ := ProdService.GetProdDetail(context.Background(), &prodReq)
+	gin_context.JSON(200, gin.H{
+		"data": ProdRes.Data,
+	})
 }

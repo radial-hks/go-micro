@@ -28,3 +28,10 @@ func (*ProdServices) GetProdsList(ctx context.Context, in *services.ProdsRequest
 	res.Data = Models
 	return nil
 }
+
+func (*ProdServices) GetProdDetail(c context.Context, req *services.ProdsRequest, res *services.ProdDetailResponse) error {
+
+	res.Data = NewProd(req.ProdId,"detail")
+	return nil
+}
+
