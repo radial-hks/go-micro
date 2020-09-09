@@ -2,7 +2,6 @@ package Weblib
 
 import (
 	"context"
-	"fmt"
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/gin-gonic/gin"
 	services "micro/Services"
@@ -33,7 +32,7 @@ func GetProdslist(gin_context *gin.Context) {
 	ProdService := gin_context.Keys["prodService"].(services.ProdService)
 	var prodReq services.ProdsRequest
 	err := gin_context.Bind(&prodReq)
-	fmt.Println(prodReq, err)
+	//fmt.Println(prodReq, err)
 	if err != nil {
 		gin_context.JSON(500, gin.H{
 			"status": err.Error(),
