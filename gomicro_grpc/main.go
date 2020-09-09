@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/micro/go-micro"
+	//"github.com/micro/go-micro/web"
 	"github.com/micro/go-plugins/registry/consul"
 	//"github.com/micro/go-micro/v3"
 	"github.com/micro/go-micro/registry"
@@ -35,13 +36,13 @@ func main() {
 
 	//创建web服务器
 	prodService := micro.NewService(
-		micro.Name("prod_service"), // 服务名
+		micro.Name("product_service"), // 服务名
 		micro.Address(":8011"),     //端口号
 		micro.Registry(consulReg),  // 注册服务
 	)
 	//初始化服务
 	prodService.Init()
-	//绑定handler -->
+	//绑定 handler -->
 	services.RegisterProdServiceHandler(prodService.Server(), new(Servicelmpl.ProdServices))
 	//运行服务
 	prodService.Run()

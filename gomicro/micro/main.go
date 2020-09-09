@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/web"
 	"github.com/micro/go-plugins/registry/consul"
-	"micro/Helper"
-	"micro/ProdService"
+	services "micro/Services"
 
 	//"net/http"
 	"github.com/gin-gonic/gin"
@@ -29,7 +31,6 @@ func main() {
 	//	writer.Write([]byte("radial"))
 	//})
 	//server.Run()
-
 	//  gin +  go-micro/web
 	r := gin.Default()
 	r.Handle("GET", "/", func(context *gin.Context) {
@@ -37,32 +38,51 @@ func main() {
 			"result": "ok",
 		})
 	})
-	// Add Route Group
-	v1group := r.Group("/v1")
-	{
-		v1group.Handle("POST", "/prod", func(context *gin.Context) {
-			var pr Helper.ProdsRequest
-			err := context.Bind(&pr)
-			if err != nil || pr.Size <= 0 {
-				pr = Helper.ProdsRequest{
-					Size: 2,
-				}
-			}
-			context.JSON(http.StatusOK, gin.H{
-				"data": ProdService.NewProdList(pr.Size),
-			})
-		})
-	}
-	//r.Run(":9090")
-	server := web.NewService(
+
+	httpserver := web.NewService(
 		// name
 		web.Name("product_service"),
 		// go run main.go --server_address :9090
-		//web.Address(":9090"),
+		web.Address(":8086"),
 		web.Handler(r),
 		//  register consul
 		web.Registry(consulreg),
 	)
-	server.Init()
-	server.Run()
+	myService := micro.NewService(
+		micro.Name("product_service_client"),
+	)
+	//product_service
+	ProdService := services.NewProdService("product_service", myService.Client())
+
+	// Add Route Group
+	v1group := r.Group("/v1")
+	{
+		v1group.Handle("POST", "/prod", func(gin_context *gin.Context) {
+			var prodReq services.ProdsRequest
+			err := gin_context.Bind(&prodReq)
+			fmt.Println(prodReq, err)
+			if err != nil {
+				gin_context.JSON(500, gin.H{
+					"status": err.Error(),
+				})
+			} else {
+				ProdRes, err := ProdService.GetProdsList(context.Background(), &prodReq)
+				fmt.Println(err)
+				if err != nil {
+					gin_context.JSON(500, gin.H{
+						"status": err.Error(),
+					})
+				} else {
+					gin_context.JSON(200, gin.H{
+						"data": ProdRes.Data,
+					})
+				}
+
+			}
+
+		})
+	}
+
+	httpserver.Init()
+	httpserver.Run()
 }
