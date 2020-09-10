@@ -6,6 +6,9 @@ protoc \
 --proto_path=${GOPATH}/src:. \
 --micro_out=../ --go_out=../ ./*.proto
 
+protoc --go_out=plugins=grpc:../../ServiceGateWay test.proto
+protoc --grpc-gateway_out=logtostderr=true:../../ServiceGateWay test.proto
+
 protoc-go-inject-tag -input=../test.pb.go
 
 cd .. && cd ..

@@ -6,14 +6,15 @@ package Services
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	math "math"
 )
 
 import (
 	context "context"
-	api "github.com/micro/go-micro/api"
-	client "github.com/micro/go-micro/client"
-	server "github.com/micro/go-micro/server"
+	api "github.com/micro/go-micro/v3/api"
+	client "github.com/micro/go-micro/v3/client"
+	server "github.com/micro/go-micro/v3/server"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -36,7 +37,14 @@ var _ server.Option
 // Api Endpoints for TestService service
 
 func NewTestServiceEndpoints() []*api.Endpoint {
-	return []*api.Endpoint{}
+	return []*api.Endpoint{
+		&api.Endpoint{
+			Name:    "TestService.Call",
+			Path:    []string{"/test/{id}"},
+			Method:  []string{"GET"},
+			Handler: "rpc",
+		},
+	}
 }
 
 // Client API for TestService service
@@ -81,6 +89,12 @@ func RegisterTestServiceHandler(s server.Server, hdlr TestServiceHandler, opts .
 		testService
 	}
 	h := &testServiceHandler{hdlr}
+	opts = append(opts, api.WithEndpoint(&api.Endpoint{
+		Name:    "TestService.Call",
+		Path:    []string{"/test/{id}"},
+		Method:  []string{"GET"},
+		Handler: "rpc",
+	}))
 	return s.Handle(s.NewHandler(&TestService{h}, opts...))
 }
 

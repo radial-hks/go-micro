@@ -1,6 +1,9 @@
 package main
 
 import (
+	_ "github.com/golang/protobuf/protoc-gen-go"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-plugins/registry/consul"
@@ -15,7 +18,7 @@ func main() {
 		registry.Addrs("127.0.0.4:8500"),
 	)
 	myservice := micro.NewService(
-		micro.Name("test_service"),
+		micro.Name("api.radial.cool"),
 		micro.Address(":8081"),
 		micro.Registry(consulreg),
 	)

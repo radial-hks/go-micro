@@ -4,11 +4,15 @@
 // 	protoc        v3.12.3
 // source: test.proto
 
-package Services
+package Service
 
 import (
+	context "context"
 	proto "github.com/golang/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -215,4 +219,84 @@ func file_test_proto_init() {
 	file_test_proto_rawDesc = nil
 	file_test_proto_goTypes = nil
 	file_test_proto_depIdxs = nil
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConnInterface
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion6
+
+// TestServiceClient is the client API for TestService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type TestServiceClient interface {
+	Call(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
+}
+
+type testServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewTestServiceClient(cc grpc.ClientConnInterface) TestServiceClient {
+	return &testServiceClient{cc}
+}
+
+func (c *testServiceClient) Call(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error) {
+	out := new(TestResponse)
+	err := c.cc.Invoke(ctx, "/Services.TestService/Call", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// TestServiceServer is the server API for TestService service.
+type TestServiceServer interface {
+	Call(context.Context, *TestRequest) (*TestResponse, error)
+}
+
+// UnimplementedTestServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedTestServiceServer struct {
+}
+
+func (*UnimplementedTestServiceServer) Call(context.Context, *TestRequest) (*TestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Call not implemented")
+}
+
+func RegisterTestServiceServer(s *grpc.Server, srv TestServiceServer) {
+	s.RegisterService(&_TestService_serviceDesc, srv)
+}
+
+func _TestService_Call_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestServiceServer).Call(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Services.TestService/Call",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestServiceServer).Call(ctx, req.(*TestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _TestService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "Services.TestService",
+	HandlerType: (*TestServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Call",
+			Handler:    _TestService_Call_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "test.proto",
 }
