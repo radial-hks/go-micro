@@ -15,6 +15,16 @@ func NewProd(id int32, pname string) *services.ProdModel {
 	}
 }
 
+// normal fall function
+func DeleteData(rsp interface{}) {
+	switch t := r.(type) {
+	case *services.ProdResponse:
+		defaultProds(rsp)
+	case *services.ProdDetailResponse:
+		t.Data = NewProd(10, "???")
+	}
+}
+
 func defaultProds(rsp interface{}) {
 	Models := make([]*services.ProdModel, 0)
 	var i int32
@@ -34,14 +44,20 @@ type ProdWrapper struct {
 
 func (l *ProdWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	cmdName := req.Service() + "." + req.Endpoint()
+	// hystrix config
 	config := hystrix.CommandConfig{
-		Timeout: 1000,
+		Timeout:                1000,
+		RequestVolumeThreshold: 5,
+		ErrorPercentThreshold:  20,
+		SleepWindow:            5000,
 	}
+
 	hystrix.ConfigureCommand(cmdName, config)
 	return hystrix.Do(cmdName, func() error {
 		return l.Client.Call(ctx, req, rsp)
 	}, func(err error) error {
-		defaultProds(rsp)
+		//defaultProds(rsp)
+		DeleteData(rsp)
 		return nil
 	})
 }
